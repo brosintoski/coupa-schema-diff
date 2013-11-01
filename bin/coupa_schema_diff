@@ -5,7 +5,7 @@ require 'fileutils'
 require 'coupa_schema_diff'
 
 opts = Trollop::options do
-  version "Schema Diff 0.0.0 (c) 2013 Bradley Rosintoski"
+  version "Schema Diff #{Gem.loaded_specs["coupa_schema_diff"].version.to_s} (c) 2013 Bradley Rosintoski"
   banner <<-EOS
   Schema Diff is an awesome program that does something very, very important.
 
@@ -14,9 +14,9 @@ opts = Trollop::options do
     where [options] are:
     EOS
 
-  opt :instance_from, "Coupa fully qualified instance name with API key (e.g. https://my-instance.coupahost.com@d4dfc810a7a3fba3290ab9da19dc635e4d8e9274)",
+  opt :instance_from, "Coupa fully qualified instance name with API key or local file directory (e.g. https://my-instance.coupahost.com@d4dfc810a7a3fba3290ab9da19dc635e4d8e9274, file://./schemas/)",
     :type => String
-  opt :instance_to, "Coupa fully qualified instance name with API key (e.g. https://my-instance.coupahost.com@d4dfc810a7a3fba3290ab9da19dc635e4d8e9274)",
+  opt :instance_to, "Coupa fully qualified instance name with API key or local file directory (e.g. https://my-instance.coupahost.com@d4dfc810a7a3fba3290ab9da19dc635e4d8e9274, file://./schemas/)",
     :type => String
   opt :objects, "List of objects sepereated by comma (e.g. account,user)",
     :type => String
@@ -28,18 +28,18 @@ end
 
 Trollop::die :instance_from, "required" unless opts[:instance_from]
 Trollop::die :instance_to, "required" unless opts[:instance_to]
-Trollop::die :objects, "required" unless opts[:objects]
 
 instance_from = opts[:instance_from].split('@')[0]
-Trollop::die :instance_from, "missing API key" unless opts[:instance_from].split('@').size == 2
+Trollop::die :instance_from, "missing API key" unless opts[:instance_from] =~ /^file/ || opts[:instance_from].split('@').size == 2
 api_key_from = opts[:instance_from].split('@')[1]
 
 instance_to = opts[:instance_to].split('@')[0]
-Trollop::die :instance_to, "missing API key" unless opts[:instance_to].split('@').size == 2
+Trollop::die :instance_to, "missing API key" unless opts[:instance_to] =~ /^file/ || opts[:instance_to].split('@').size == 2
 api_key_to = opts[:instance_to].split('@')[1]
 
 objects = opts[:objects]
 
 result = CoupaSchemaDiff.diff(instance_from,api_key_from,instance_to,api_key_to,objects,opts)
+
 
 puts result
