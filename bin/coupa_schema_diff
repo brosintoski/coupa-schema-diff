@@ -20,10 +20,14 @@ opts = Trollop::options do
     :type => String
   opt :objects, "List of objects sepereated by comma (e.g. account,user)",
     :type => String
+  opt :context, "number of lines of context that are shown around each change",
+    :type => Integer,
+    :default => 0    
   opt :in_only, "return inbound only"
   opt :out_only, "return outbound only"
   opt :api_only, "return api only"
   opt :csv_only, "return csv only"
+  opt :store_generated_schemas, "store generated schemas to disk (e.g. Supplier_api_out.xsd)"
 end
 
 Trollop::die :instance_from, "required" unless opts[:instance_from]

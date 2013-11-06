@@ -45,7 +45,9 @@ module CoupaSchemaDiff
           response_to = get_response("#{instance_to}/api/schemas/xml?object=#{obj}",api_key_to)
         end
 
-        output << Diffy::Diff.new(response_from, response_to, :context => 0).to_s(:html)
+        File.open("#{instance_from.gsub(/^(http|https|file):\/\//,'')}_#{obj}_api_out.xsd", 'w') {|f| f.write(response_from) } if opts[:store_generated_schemas]
+        File.open("#{instance_to.gsub(/^(http|https|file):\/\//,'')}_#{obj}_api_out.xsd", 'w') {|f| f.write(response_to) } if opts[:store_generated_schemas]
+        output << Diffy::Diff.new(response_from, response_to, :context => opts[:context]).to_s(:html)
       end
 
       unless opts[:out_only] || opts[:csv_only]
@@ -62,7 +64,10 @@ module CoupaSchemaDiff
           response_to = get_response("#{instance_to}/api/schemas/xml?object=#{obj}&in=1",api_key_to)
         end
 
-        output << Diffy::Diff.new(response_from, response_to, :context => 0).to_s(:html)
+        File.open("#{instance_from.gsub(/^(http|https|file):\/\//,'')}_#{obj}_api_in.xsd", 'w') {|f| f.write(response_from) } if opts[:store_generated_schemas]
+        File.open("#{instance_to.gsub(/^(http|https|file):\/\//,'')}_#{obj}_api_in.xsd", 'w') {|f| f.write(response_to) } if opts[:store_generated_schemas]
+
+        output << Diffy::Diff.new(response_from, response_to, :context => opts[:context]).to_s(:html)
       end
 
       unless opts[:in_only] || opts[:api_only]
@@ -79,8 +84,10 @@ module CoupaSchemaDiff
           response_to = get_response("#{instance_to}/api/schemas/csv?object=#{obj}",api_key_to)
         end
 
+        File.open("#{instance_from.gsub(/^(http|https|file):\/\//,'')}_#{obj}_csv_out.xsd", 'w') {|f| f.write(response_from) } if opts[:store_generated_schemas]
+        File.open("#{instance_to.gsub(/^(http|https|file):\/\//,'')}_#{obj}_csv_out.xsd", 'w') {|f| f.write(response_to) } if opts[:store_generated_schemas]
         # if response_from.code == '200' && response_to.code == '200'
-          output << Diffy::Diff.new(response_from, response_to, :context => 0).to_s(:html)
+          output << Diffy::Diff.new(response_from, response_to, :context => opts[:context]).to_s(:html)
         # else
           # output << "<div>CSV Out format does NOT exist</div>"
         # end
@@ -100,7 +107,9 @@ module CoupaSchemaDiff
           response_to = get_response("#{instance_to}/api/schemas/csv?object=#{obj}&in=1",api_key_to)
         end
 
-        output << Diffy::Diff.new(response_from, response_to, :context => 0).to_s(:html)
+        File.open("#{instance_from.gsub(/^(http|https|file):\/\//,'')}_#{obj}_csv_in.xsd", 'w') {|f| f.write(response_from) } if opts[:store_generated_schemas]
+        File.open("#{instance_to.gsub(/^(http|https|file):\/\//,'')}_#{obj}_csv_in.xsd", 'w') {|f| f.write(response_to) } if opts[:store_generated_schemas]
+        output << Diffy::Diff.new(response_from, response_to, :context => opts[:context]).to_s(:html)
       end
 
     end
